@@ -1,4 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Staleness Score v2 - Documentation Health Dashboard
+
+A comprehensive static website showcasing the Staleness Score v2 proposal and interactive dashboard for measuring documentation health.
+
+## Features
+
+### 📄 Proposal Section
+- Complete internal proposal document with executive summary
+- Detailed explanation of the new scoring model
+- Technical architecture and implementation details
+- Success metrics and team culture considerations
+
+### 📊 Interactive Dashboard
+- **Real-time Metrics**: Overview of documentation health across teams
+- **Staleness Gauge**: Visual representation of document risk levels
+- **Team Health Dashboard**: Comparative charts showing team performance
+- **Search Interface**: Filter and explore documentation by health score
+- **Detailed Breakdowns**: Explainable scoring with factor analysis
+- **Actionable Recommendations**: Prioritized suggestions for improvement
+
+## Tech Stack
+
+- **Framework**: Next.js 16.x (React App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Charts**: Recharts
+- **Icons**: Lucide React
+- **Components**: Radix UI primitives
 
 ## Getting Started
 
@@ -6,15 +33,6 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
