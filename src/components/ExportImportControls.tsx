@@ -27,7 +27,7 @@ export function ExportImportControls({ documents, onImport }: ExportImportContro
   const handleImportClick = () => {
     const input = document.createElement('input')
     input.type = 'file'
-    input.accept = '.json'
+    input.accept = '.pdf'
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0]
       if (file) {
