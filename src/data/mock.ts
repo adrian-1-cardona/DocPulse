@@ -1,4 +1,20 @@
-export const mockDocuments = [
+export const mockDocuments: Array<{
+  id: string
+  title: string
+  path: string
+  overallScore: number
+  stabilityScore: number
+  codeAlignmentScore: number
+  infoDemandScore: number
+  ownershipScore: number
+  lastUpdated: string
+  owner: string
+  category: 'runbook' | 'architecture' | 'glossary' | 'api-docs' | 'guide'
+  reasons: string[]
+  recommendations: string[]
+  slackQuestions: number
+  codeChanges: number
+}> = [
   {
     id: '1',
     title: 'Payment Processing API Documentation',
@@ -106,7 +122,12 @@ export const mockTeamHealth = [
     excellentDocs: 4
   }
 ]
-export const mockScoreBreakdown = {
+export const mockScoreBreakdown: {
+  stability: { score: number; weight: 0.4; description: string; factors: string[] }
+  codeAlignment: { score: number; weight: 0.3; description: string; factors: string[] }
+  infoDemand: { score: number; weight: 0.2; description: string; factors: string[] }
+  ownership: { score: number; weight: 0.1; description: string; factors: string[] }
+} = {
   stability: {
     score: 65,
     weight: 0.4,
