@@ -1,8 +1,9 @@
 'use client'
 
-import { Download, Upload } from 'lucide-react'
+import { Upload, FileText } from 'lucide-react'
+import { useState } from 'react'
 import { DocumentScore } from '../types'
-import { exportWorkspace, importWorkspace } from '../lib/ingestion'
+import { importWorkspace, exportWorkspaceToPDF } from '../lib/ingestion'
 
 interface ExportImportControlsProps {
   documents: DocumentScore[]
@@ -10,17 +11,17 @@ interface ExportImportControlsProps {
 }
 
 export function ExportImportControls({ documents, onImport }: ExportImportControlsProps) {
-  const handleExport = () => {
-    const jsonString = exportWorkspace(documents)
-    const blob = new Blob([jsonString], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `document-pulse-workspace-${new Date().toISOString().split('T')[0]}.json`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+  const [isExportingPDF, setIsExportingPDF] = useState(false)
+
+  const handleExportPDF = async () => {
+    try {
+      setIsExportingPDF(true)
+      await exportWorkspaceToPDF(documents)
+    } catch (error) {
+      alert(`✗ PDF export failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setIsExportingPDF(false)
+    }
   }
 
   const handleImportClick = () => {
@@ -50,12 +51,13 @@ export function ExportImportControls({ documents, onImport }: ExportImportContro
   return (
     <div className="flex space-x-2">
       <button
-        onClick={handleExport}
-        className="inline-flex items-center space-x-1 px-3 py-2 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-        title="Export workspace as JSON"
+        onClick={handleExportPDF}
+        disabled={isExportingPDF}
+        className="inline-flex items-center space-x-1 px-3 py-2 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        title="Export workspace as PDF with detailed analysis"
       >
-        <Download className="h-3.5 w-3.5" />
-        <span>Export</span>
+        <FileText className="h-3.5 w-3.5" />
+        <span>{isExportingPDF ? 'Generating...' : 'Export PDF'}</span>
       </button>
       <button
         onClick={handleImportClick}
