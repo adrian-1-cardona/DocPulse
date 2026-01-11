@@ -10,7 +10,7 @@ import { SearchResultRow } from '../src/components/SearchResultRow'
 import { DocumentHealthDrawer } from '../src/components/DocumentHealthDrawer'
 import { ExportImportControls } from '../src/components'
 import { mockDocuments, mockTeamHealth, mockScoreBreakdown } from '../src/data/mock'
-import { DocumentScore, DocumentIngestionRequest } from '../src/types'
+import { DocumentScore } from '../src/types'
 
 export default function Home() {
   const [documents, setDocuments] = useState<DocumentScore[]>(mockDocuments)
