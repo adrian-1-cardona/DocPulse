@@ -8,7 +8,7 @@ import { RecommendedActionsCard } from '../src/components/RecommendedActionsCard
 import { TeamHealthDashboard } from '../src/components/TeamHealthDashboard'
 import { SearchResultRow } from '../src/components/SearchResultRow'
 import { DocumentHealthDrawer } from '../src/components/DocumentHealthDrawer'
-import { DocumentUploadModal, ExportImportControls, MVPBanner } from '../src/components'
+import { DocumentUploadModal, ExportImportControls} from '../src/components'
 import { mockDocuments, mockTeamHealth, mockScoreBreakdown } from '../src/data/mock'
 import { DocumentScore, DocumentIngestionRequest } from '../src/types'
 
@@ -86,9 +86,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* MVP Banner */}
-      <MVPBanner />
-
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
