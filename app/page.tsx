@@ -1,14 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, FileText, TrendingUp, Clock, Upload } from 'lucide-react'
+import { Search, FileText, TrendingUp, Clock } from 'lucide-react'
 import { StalenessGauge } from '../src/components/StalenessGauge'
 import { FactorBreakdownCard } from '../src/components/FactorBreakdownCard'
 import { RecommendedActionsCard } from '../src/components/RecommendedActionsCard'
 import { TeamHealthDashboard } from '../src/components/TeamHealthDashboard'
 import { SearchResultRow } from '../src/components/SearchResultRow'
 import { DocumentHealthDrawer } from '../src/components/DocumentHealthDrawer'
-import { DocumentUploadModal, ExportImportControls} from '../src/components'
+import { ExportImportControls } from '../src/components'
 import { mockDocuments, mockTeamHealth, mockScoreBreakdown } from '../src/data/mock'
 import { DocumentScore, DocumentIngestionRequest } from '../src/types'
 
@@ -16,50 +16,12 @@ export default function Home() {
   const [documents, setDocuments] = useState<DocumentScore[]>(mockDocuments)
   const [selectedDocument, setSelectedDocument] = useState<DocumentScore | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   const filteredDocuments = documents.filter(doc =>
     doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     doc.path.toLowerCase().includes(searchQuery.toLowerCase())
   )
-
-  const handleUploadDocuments = (ingestionRequests: DocumentIngestionRequest[]) => {
-    try {
-      // Add documents with basic metadata
-      const newDocs = ingestionRequests.map((req, idx) => ({
-        id: `doc-${Date.now()}-${idx}`,
-        title: req.metadata.title,
-        path: `/docs/${req.metadata.docType.toLowerCase()}/${req.metadata.title.toLowerCase().replace(/\s+/g, '-')}`,
-        owner: req.metadata.owner || 'Unassigned',
-        category: req.metadata.docType.toLowerCase(),
-        lastUpdated: new Date().toISOString().split('T')[0],
-        overallScore: Math.floor(Math.random() * 30) + 60, // 60-90
-        stabilityScore: 80,
-        codeAlignmentScore: 75,
-        infoDemandScore: 85,
-        ownershipScore: 70,
-        reasons: ['Recently added', 'Metadata provided'],
-        recommendations: ['Review content for accuracy'],
-        slackQuestions: 0,
-        codeChanges: 0
-      } as DocumentScore))
-      const updated = [...documents, ...newDocs]
-      setDocuments(updated)
-      
-      setToast({
-        message: `✓ ${newDocs.length} document${newDocs.length !== 1 ? 's' : ''} added to dashboard`,
-        type: 'success'
-      })
-      setTimeout(() => setToast(null), 4000)
-    } catch (error) {
-      setToast({
-        message: `✗ Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        type: 'error'
-      })
-      setTimeout(() => setToast(null), 4000)
-    }
-  }
 
   const handleImportWorkspace = (imported: DocumentScore[]) => {
     try {
@@ -98,13 +60,6 @@ export default function Home() {
             </div>
             <div className="flex items-center space-x-3">
               <ExportImportControls documents={documents} onImport={handleImportWorkspace} />
-              <button
-                onClick={() => setIsUploadModalOpen(true)}
-                className="inline-flex items-center space-x-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-              >
-                <Upload className="h-4 w-4" />
-                <span>Upload</span>
-              </button>
             </div>
           </div>
         </div>
@@ -201,7 +156,7 @@ export default function Home() {
                   />
                 ))
               ) : (
-                <p className="text-gray-500 text-sm">No documents found. Try uploading some!</p>
+                <p className="text-gray-500 text-sm">No documents found.</p>
               )}
             </div>
           </div>
@@ -242,13 +197,6 @@ export default function Home() {
         breakdown={mockScoreBreakdown}
         isOpen={!!selectedDocument}
         onClose={() => setSelectedDocument(null)}
-      />
-
-      {/* Upload Modal */}
-      <DocumentUploadModal
-        isOpen={isUploadModalOpen}
-        onClose={() => setIsUploadModalOpen(false)}
-        onSubmit={handleUploadDocuments}
       />
 
       {/* Toast Notification */}
