@@ -73,9 +73,9 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
   const addWrappedText = (text: string, fontSize: number = 10, isBold: boolean = false) => {
     doc.setFontSize(fontSize)
     if (isBold) {
-      doc.setFont(undefined, 'bold')
+      doc.setFont('', 'bold')
     } else {
-      doc.setFont(undefined, 'normal')
+      doc.setFont('', 'normal')
     }
     
     const maxWidth = pageWidth - 2 * margin
@@ -92,13 +92,13 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
   
   // Title
   doc.setFontSize(16)
-  doc.setFont(undefined, 'bold')
+  doc.setFont('', 'bold')
   doc.text('DocPulse Workspace Export', margin, yPosition)
   yPosition += 10
   
   // Export metadata
   doc.setFontSize(9)
-  doc.setFont(undefined, 'normal')
+  doc.setFont('', 'normal')
   doc.text(`Exported: ${new Date().toLocaleString()}`, margin, yPosition)
   yPosition += 5
   doc.text(`Total Documents: ${documents.length}`, margin, yPosition)
@@ -156,7 +156,7 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
     yPosition += 3
     
     // Overall Score - highlighted
-    doc.setFont(undefined, 'bold')
+    doc.setFont('', 'bold')
     doc.setFontSize(10)
     doc.setTextColor(
       doc_item.overallScore >= 70 ? 34 : doc_item.overallScore >= 50 ? 180 : 220,
@@ -168,7 +168,7 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
     yPosition += 6
     
     // Score breakdown
-    doc.setFont(undefined, 'normal')
+    doc.setFont('', 'normal')
     doc.setFontSize(9)
     const breakdown = [
       `  → Stability: ${doc_item.stabilityScore}/100`,
@@ -185,9 +185,9 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
     
     // Reasons (Signals/Factors)
     if (doc_item.reasons && doc_item.reasons.length > 0) {
-      doc.setFont(undefined, 'bold')
+      doc.setFont('', 'bold')
       addWrappedText('Factors Affecting Score:', 9, true)
-      doc.setFont(undefined, 'normal')
+      doc.setFont('', 'normal')
       doc_item.reasons.forEach((reason: string) => {
         addWrappedText(`  • ${reason}`, 8)
       })
@@ -197,9 +197,9 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
     
     // Recommendations
     if (doc_item.recommendations && doc_item.recommendations.length > 0) {
-      doc.setFont(undefined, 'bold')
+      doc.setFont('', 'bold')
       addWrappedText('Recommendations for Improvement:', 9, true)
-      doc.setFont(undefined, 'normal')
+      doc.setFont('', 'normal')
       doc_item.recommendations.forEach((rec: string) => {
         addWrappedText(`  ✓ ${rec}`, 8)
       })
