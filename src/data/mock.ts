@@ -4,94 +4,40 @@ const mockDocuments = [
     title: 'Payment Processing API Documentation',
     path: '/docs/api/payments',
     overallScore: 78,
-    stabilityScore: 65,
-    codeAlignmentScore: 45,
-    infoDemandScore: 85,
-    ownershipScore: 90,
-    lastUpdated: '2024-08-15',
     owner: 'Payments Team',
     category: 'api-docs',
-    reasons: [
-      'High code changes related to this doc\'s topic',
-      '14 confusion-driven Slack questions in past 30 days',
-      'Doc category = "high volatility" (API Documentation)'
-    ],
-    recommendations: [
-      'Update API endpoint examples',
-      'Review recent code changes in payments service',
-      'Address common questions in FAQ section'
-    ],
-    slackQuestions: 14,
-    codeChanges: 23
+    lastUpdated: '2024-08-15',
+    recommendations: ['Update API endpoint examples', 'Review recent code changes in payments service', 'Address common questions in FAQ section']
   },
   {
     id: '2',
     title: 'Kubernetes Deployment Runbook',
     path: '/docs/infrastructure/k8s-deploy',
     overallScore: 42,
-    stabilityScore: 80,
-    codeAlignmentScore: 70,
-    infoDemandScore: 30,
-    ownershipScore: 85,
-    lastUpdated: '2024-10-02',
     owner: 'DevOps Team',
     category: 'runbook',
-    reasons: [
-      'Recent infrastructure changes not reflected',
-      'Some outdated kubectl commands'
-    ],
-    recommendations: [
-      'Update kubectl version examples',
-      'Add new namespace configuration'
-    ],
-    slackQuestions: 3,
-    codeChanges: 8
+    lastUpdated: '2024-10-02',
+    recommendations: ['Update kubectl version examples', 'Add new namespace configuration']
   },
   {
     id: '3',
     title: 'Company Style Guide',
     path: '/docs/design/style-guide',
     overallScore: 15,
-    stabilityScore: 95,
-    codeAlignmentScore: 100,
-    infoDemandScore: 90,
-    ownershipScore: 95,
-    lastUpdated: '2024-11-01',
     owner: 'Design Team',
     category: 'guide',
-    reasons: [],
-    recommendations: [
-      'Continue maintaining excellent documentation practices'
-    ],
-    slackQuestions: 1,
-    codeChanges: 0
+    lastUpdated: '2024-11-01',
+    recommendations: ['Continue maintaining excellent documentation practices']
   },
   {
     id: '4',
     title: 'Database Architecture Overview',
     path: '/docs/architecture/database',
     overallScore: 89,
-    stabilityScore: 30,
-    codeAlignmentScore: 20,
-    infoDemandScore: 95,
-    ownershipScore: 40,
-    lastUpdated: '2024-03-12',
     owner: 'Backend Team',
     category: 'architecture',
-    reasons: [
-      'Major database migration not documented',
-      '28 confusion-driven Slack questions in past 30 days',
-      'No clear owner assigned',
-      'Critical architectural changes missing'
-    ],
-    recommendations: [
-      'Document recent database migration',
-      'Assign clear documentation owner',
-      'Update schema diagrams',
-      'Create migration troubleshooting guide'
-    ],
-    slackQuestions: 28,
-    codeChanges: 45
+    lastUpdated: '2024-03-12',
+    recommendations: ['Document recent database migration', 'Assign clear documentation owner', 'Update schema diagrams', 'Create migration troubleshooting guide']
   }
 const mockTeamHealth = [
   {
@@ -172,91 +118,11 @@ const mockScoreBreakdown = {
     ]
   }
 const mockWaitingList = [
-  {
-    id: '1',
-    title: 'Update Payment Gateway Integration Guide',
-    requestedBy: 'Sarah Chen',
-    assignee: 'Mike Rodriguez',
-    priority: 'urgent',
-    requestDate: '2024-11-24',
-    estimatedHours: 4,
-    category: 'update',
-    stalenessScore: 89,
-    description: 'Critical updates needed for new Stripe API v2024-11-20. Multiple developers blocked on outdated webhook examples.'
-  },
-  {
-    id: '2',
-    title: 'Create Database Migration Runbook',
-    requestedBy: 'Tech Lead Team',
-    priority: 'high',
-    requestDate: '2024-11-22',
-    estimatedHours: 8,
-    category: 'new',
-    description: 'Need comprehensive guide for PostgreSQL 15 to 16 migration process. Include rollback procedures and testing checklist.'
-  },
-  {
-    id: '3',
-    title: 'Review API Authentication Documentation',
-    requestedBy: 'Security Team',
-    assignee: 'Alex Thompson',
-    priority: 'high',
-    requestDate: '2024-11-20',
-    estimatedHours: 3,
-    category: 'review',
-    stalenessScore: 72,
-    description: 'Security audit identified outdated OAuth2 flow documentation. Need to verify all examples and security recommendations.'
-  },
-  {
-    id: '4',
-    title: 'Migrate Confluence Docs to New Platform',
-    requestedBy: 'DevOps Team',
-    priority: 'medium',
-    requestDate: '2024-11-18',
-    estimatedHours: 16,
-    category: 'migration',
-    description: 'Move 50+ legacy Confluence pages to new documentation platform. Preserve linking structure and update outdated content.'
-  },
-  {
-    id: '5',
-    title: 'Update Monitoring Alerts Playbook',
-    requestedBy: 'On-call Rotation',
-    priority: 'medium',
-    requestDate: '2024-11-15',
-    estimatedHours: 6,
-    category: 'update',
-    stalenessScore: 58,
-    description: 'Add new Datadog integration steps and update PagerDuty escalation policies. Include recent incident response improvements.'
-  },
-  {
-    id: '6',
-    title: 'Create Frontend Component Library Guide',
-    requestedBy: 'Design System Team',
-    priority: 'low',
-    requestDate: '2024-11-10',
-    estimatedHours: 12,
-    category: 'new',
-    description: 'Comprehensive documentation for React component library v2.0. Include usage examples, props documentation, and design tokens.'
-  },
-  {
-    id: '7',
-    title: 'Review Docker Deployment Guide',
-    requestedBy: 'Junior Developer',
-    priority: 'low',
-    requestDate: '2024-11-08',
-    estimatedHours: 2,
-    category: 'review',
-    stalenessScore: 35,
-    description: 'Verify Docker Compose examples work with latest version. Update environment variable references and networking setup.'
-  },
-  {
-    id: '8',
-    title: 'Emergency: Fix Broken API Examples',
-    requestedBy: 'Customer Support',
-    priority: 'urgent',
-    requestDate: '2024-11-25',
-    estimatedHours: 2,
-    category: 'update',
-    stalenessScore: 95,
-    description: 'Multiple customer complaints about non-working API examples in integration guide. Affecting trial conversions.'
-  }
-]
+  { id: '1', title: 'Update Payment Gateway Integration Guide', requestedBy: 'Sarah Chen', assignee: 'Mike Rodriguez', priority: 'urgent', requestDate: '2024-11-24', estimatedHours: 4, category: 'update', stalenessScore: 89, description: 'Critical updates needed for new Stripe API v2024-11-20. Multiple developers blocked on outdated webhook examples.' },
+  { id: '2', title: 'Create Database Migration Runbook', requestedBy: 'Tech Lead Team', priority: 'high', requestDate: '2024-11-22', estimatedHours: 8, category: 'new', description: 'Need comprehensive guide for PostgreSQL 15 to 16 migration process. Include rollback procedures and testing checklist.' },
+  { id: '3', title: 'Review API Authentication Documentation', requestedBy: 'Security Team', assignee: 'Alex Thompson', priority: 'high', requestDate: '2024-11-20', estimatedHours: 3, category: 'review', stalenessScore: 72, description: 'Security audit identified outdated OAuth2 flow documentation. Need to verify all examples and security recommendations.' },
+  { id: '4', title: 'Migrate Confluence Docs to New Platform', requestedBy: 'DevOps Team', priority: 'medium', requestDate: '2024-11-18', estimatedHours: 16, category: 'migration', description: 'Move 50+ legacy Confluence pages to new documentation platform. Preserve linking structure and update outdated content.' },
+  { id: '5', title: 'Update Monitoring Alerts Playbook', requestedBy: 'On-call Rotation', priority: 'medium', requestDate: '2024-11-15', estimatedHours: 6, category: 'update', stalenessScore: 58, description: 'Add new Datadog integration steps and update PagerDuty escalation policies. Include recent incident response improvements.' },
+  { id: '6', title: 'Create Frontend Component Library Guide', requestedBy: 'Design System Team', priority: 'low', requestDate: '2024-11-10', estimatedHours: 12, category: 'new', description: 'Comprehensive documentation for React component library v2.0. Include usage examples, props documentation, and design tokens.' },
+  { id: '7', title: 'Review Docker Deployment Guide', requestedBy: 'Junior Developer', priority: 'low', requestDate: '2024-11-08', estimatedHours: 2, category: 'review', stalenessScore: 35, description: 'Verify Docker Compose examples work with latest version. Update environment variable references and networking setup.' },
+  { id: '8', title: 'Emergency: Fix Broken API Examples', requestedBy: 'Customer Support', priority: 'urgent', requestDate: '2024-11-25', estimatedHours: 2, category: 'update', stalenessScore: 95, description: 'Multiple customer complaints about non-working API examples in integration guide. Affecting trial conversions.' }
