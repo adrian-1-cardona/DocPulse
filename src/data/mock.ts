@@ -1,6 +1,4 @@
-import { DocumentScore, TeamHealthSummary, ScoreBreakdown, WaitingListItem } from '../types'
-
-export const mockDocuments: DocumentScore[] = [
+const mockDocuments = [
   {
     id: '1',
     title: 'Payment Processing API Documentation',
@@ -95,9 +93,7 @@ export const mockDocuments: DocumentScore[] = [
     slackQuestions: 28,
     codeChanges: 45
   }
-]
-
-export const mockTeamHealth: TeamHealthSummary[] = [
+const mockTeamHealth = [
   {
     teamName: 'Payments Team',
     totalDocs: 12,
@@ -134,9 +130,7 @@ export const mockTeamHealth: TeamHealthSummary[] = [
     lowRiskDocs: 2,
     excellentDocs: 4
   }
-]
-
-export const mockScoreBreakdown: ScoreBreakdown = {
+const mockScoreBreakdown = {
   stability: {
     score: 65,
     weight: 0.4,
@@ -177,9 +171,7 @@ export const mockScoreBreakdown: ScoreBreakdown = {
       'Good response time to documentation issues'
     ]
   }
-}
-
-export const mockWaitingList: WaitingListItem[] = [
+const mockWaitingList = [
   {
     id: '1',
     title: 'Update Payment Gateway Integration Guide',
