@@ -72,11 +72,7 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
   // Helper function to add text with wrapping
   const addWrappedText = (text: string, fontSize: number = 10, isBold: boolean = false) => {
     doc.setFontSize(fontSize)
-    if (isBold) {
-      doc.setFont('', 'bold')
-    } else {
-      doc.setFont('', 'normal')
-    }
+    doc.setFont(undefined, isBold ? 'bold' : 'normal')
     
     const maxWidth = pageWidth - 2 * margin
     const lines = doc.splitTextToSize(text, maxWidth)
@@ -91,14 +87,14 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
   }
   
   // Title
+  doc.setFont(undefined, 'bold')
   doc.setFontSize(16)
-  doc.setFont('', 'bold')
   doc.text('DocPulse Workspace Export', margin, yPosition)
   yPosition += 10
   
   // Export metadata
+  doc.setFont(undefined, 'normal')
   doc.setFontSize(9)
-  doc.setFont('', 'normal')
   doc.text(`Exported: ${new Date().toLocaleString()}`, margin, yPosition)
   yPosition += 5
   doc.text(`Total Documents: ${documents.length}`, margin, yPosition)
@@ -113,10 +109,10 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
   
   const methodology = [
     `Overall Score is weighted average of 4 components:`,
-    `• Stability Score (40% weight) - Based on how recent and stable the documentation is`,
-    `• Code Alignment Score (30% weight) - How well the documentation aligns with current codebase`,
-    `• Information Demand Score (20% weight) - Based on team questions and demand for updates`,
-    `• Ownership Score (10% weight) - Whether the document has clear ownership and recent reviews`,
+    `- Stability Score (40% weight) - Based on how recent and stable the documentation is`,
+    `- Code Alignment Score (30% weight) - How well the documentation aligns with current codebase`,
+    `- Information Demand Score (20% weight) - Based on team questions and demand for updates`,
+    `- Ownership Score (10% weight) - Whether the document has clear ownership and recent reviews`,
     `Each component is scored 0-100, and the overall score reflects health and freshness.`
   ]
   
@@ -156,7 +152,7 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
     yPosition += 3
     
     // Overall Score - highlighted
-    doc.setFont('', 'bold')
+    doc.setFont(undefined, 'bold')
     doc.setFontSize(10)
     doc.setTextColor(
       doc_item.overallScore >= 70 ? 34 : doc_item.overallScore >= 50 ? 180 : 220,
@@ -168,28 +164,28 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
     yPosition += 6
     
     // Score breakdown
-    doc.setFont('', 'normal')
+    doc.setFont(undefined, 'normal')
     doc.setFontSize(9)
     const breakdown = [
-      `  → Stability: ${doc_item.stabilityScore}/100`,
-      `  → Code Alignment: ${doc_item.codeAlignmentScore}/100`,
-      `  → Information Demand: ${doc_item.infoDemandScore}/100`,
-      `  → Ownership: ${doc_item.ownershipScore}/100`
+      `Stability: ${doc_item.stabilityScore}/100`,
+      `Code Alignment: ${doc_item.codeAlignmentScore}/100`,
+      `Information Demand: ${doc_item.infoDemandScore}/100`,
+      `Ownership: ${doc_item.ownershipScore}/100`
     ]
     
     breakdown.forEach(line => {
-      addWrappedText(line, 9)
+      addWrappedText(`  ${line}`, 9)
     })
     
     yPosition += 2
     
     // Reasons (Signals/Factors)
     if (doc_item.reasons && doc_item.reasons.length > 0) {
-      doc.setFont('', 'bold')
+      doc.setFont(undefined, 'bold')
       addWrappedText('Factors Affecting Score:', 9, true)
-      doc.setFont('', 'normal')
+      doc.setFont(undefined, 'normal')
       doc_item.reasons.forEach((reason: string) => {
-        addWrappedText(`  • ${reason}`, 8)
+        addWrappedText(`  - ${reason}`, 8)
       })
     }
     
@@ -197,11 +193,11 @@ export async function exportWorkspaceToPDF(documents: DocumentScore[]): Promise<
     
     // Recommendations
     if (doc_item.recommendations && doc_item.recommendations.length > 0) {
-      doc.setFont('', 'bold')
+      doc.setFont(undefined, 'bold')
       addWrappedText('Recommendations for Improvement:', 9, true)
-      doc.setFont('', 'normal')
+      doc.setFont(undefined, 'normal')
       doc_item.recommendations.forEach((rec: string) => {
-        addWrappedText(`  ✓ ${rec}`, 8)
+        addWrappedText(`  - ${rec}`, 8)
       })
     }
     
