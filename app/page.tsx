@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, FileText, Users, TrendingUp, Clock } from 'lucide-react'
+import { Search, FileText, Users, TrendingUp, Clock, Upload } from 'lucide-react'
 import { StalenessGauge } from '../src/components/StalenessGauge'
 import { FactorBreakdownCard } from '../src/components/FactorBreakdownCard'
 import { RecommendedActionsCard } from '../src/components/RecommendedActionsCard'
@@ -9,29 +9,76 @@ import { TeamHealthDashboard } from '../src/components/TeamHealthDashboard'
 import { SearchResultRow } from '../src/components/SearchResultRow'
 import { DocumentHealthDrawer } from '../src/components/DocumentHealthDrawer'
 import { QueueManagement } from '../src/components/QueueManagement'
+import { DocumentUploadModal, ExportImportControls, MVPBanner } from '../src/components'
 import { mockDocuments, mockTeamHealth, mockScoreBreakdown, mockWaitingList } from '../src/data/mock'
-import { DocumentScore } from '../src/types'
+import { DocumentScore, DocumentIngestionRequest } from '../src/types'
+import { ingestDocument } from '../src/lib/ingestion'
 
 export default function Home() {
+  const [documents, setDocuments] = useState<DocumentScore[]>(mockDocuments)
   const [selectedDocument, setSelectedDocument] = useState<DocumentScore | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState<'proposal' | 'dashboard'>('proposal')
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
-  const filteredDocuments = mockDocuments.filter(doc =>
+  const filteredDocuments = documents.filter(doc =>
     doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     doc.path.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  const handleUploadDocuments = (ingestionRequests: DocumentIngestionRequest[]) => {
+    try {
+      const newDocs = ingestionRequests.map(req => ingestDocument(req, documents))
+      const updated = [...documents, ...newDocs]
+      setDocuments(updated)
+      
+      const highRiskCount = newDocs.filter(d => d.overallScore >= 70).length
+      const riskInfo = highRiskCount > 0 ? ` — ${highRiskCount} is high risk` : ''
+      setToast({
+        message: `✓ ${newDocs.length} document${newDocs.length !== 1 ? 's' : ''} added${riskInfo}`,
+        type: 'success'
+      })
+      setTimeout(() => setToast(null), 4000)
+    } catch (error) {
+      setToast({
+        message: `✗ Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        type: 'error'
+      })
+      setTimeout(() => setToast(null), 4000)
+    }
+  }
+
+  const handleImportWorkspace = (imported: DocumentScore[]) => {
+    try {
+      setDocuments(imported)
+      setToast({
+        message: `✓ Imported ${imported.length} documents from workspace`,
+        type: 'success'
+      })
+      setTimeout(() => setToast(null), 4000)
+    } catch (error) {
+      setToast({
+        message: `✗ Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        type: 'error'
+      })
+      setTimeout(() => setToast(null), 4000)
+    }
+  }
+
   const overallStats = {
-    totalDocs: mockDocuments.length,
-    averageScore: Math.round(mockDocuments.reduce((acc, doc) => acc + doc.overallScore, 0) / mockDocuments.length),
-    highRiskDocs: mockDocuments.filter(doc => doc.overallScore >= 80).length,
+    totalDocs: documents.length,
+    averageScore: Math.round(documents.reduce((acc, doc) => acc + doc.overallScore, 0) / documents.length),
+    highRiskDocs: documents.filter(doc => doc.overallScore >= 80).length,
     pendingRequests: mockWaitingList.length,
     urgentItems: mockWaitingList.filter(item => item.priority === 'urgent').length
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* MVP Banner */}
+      <MVPBanner />
+
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,28 +89,43 @@ export default function Home() {
                 Staleness Score v2
               </h1>
             </div>
-            <nav className="flex space-x-4">
-              <button
-                onClick={() => setActiveTab('proposal')}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'proposal'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Proposal
-              </button>
-              <button
-                onClick={() => setActiveTab('dashboard')}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'dashboard'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Dashboard
-              </button>
-            </nav>
+            <div className="flex items-center space-x-4">
+              <nav className="flex space-x-4">
+                <button
+                  onClick={() => setActiveTab('proposal')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md ${
+                    activeTab === 'proposal'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Proposal
+                </button>
+                <button
+                  onClick={() => setActiveTab('dashboard')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md ${
+                    activeTab === 'dashboard'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Dashboard
+                </button>
+              </nav>
+
+              {activeTab === 'dashboard' && (
+                <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
+                  <ExportImportControls documents={documents} onImport={handleImportWorkspace} />
+                  <button
+                    onClick={() => setIsUploadModalOpen(true)}
+                    className="inline-flex items-center space-x-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                  >
+                    <Upload className="h-4 w-4" />
+                    <span>Upload</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -329,6 +391,28 @@ export default function Home() {
         isOpen={!!selectedDocument}
         onClose={() => setSelectedDocument(null)}
       />
+
+      {/* Upload Modal */}
+      <DocumentUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onSubmit={handleUploadDocuments}
+      />
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-4 right-4 z-40">
+          <div
+            className={`px-4 py-3 rounded-lg shadow-lg text-sm font-medium ${
+              toast.type === 'success'
+                ? 'bg-green-500 text-white'
+                : 'bg-red-500 text-white'
+            }`}
+          >
+            {toast.message}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
