@@ -1,16 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, FileText, Users, TrendingUp, Clock, Upload } from 'lucide-react'
+import { Search, FileText, TrendingUp, Clock, Upload } from 'lucide-react'
 import { StalenessGauge } from '../src/components/StalenessGauge'
 import { FactorBreakdownCard } from '../src/components/FactorBreakdownCard'
 import { RecommendedActionsCard } from '../src/components/RecommendedActionsCard'
 import { TeamHealthDashboard } from '../src/components/TeamHealthDashboard'
 import { SearchResultRow } from '../src/components/SearchResultRow'
 import { DocumentHealthDrawer } from '../src/components/DocumentHealthDrawer'
-import { QueueManagement } from '../src/components/QueueManagement'
 import { DocumentUploadModal, ExportImportControls, MVPBanner } from '../src/components'
-import { mockDocuments, mockTeamHealth, mockScoreBreakdown, mockWaitingList } from '../src/data/mock'
+import { mockDocuments, mockTeamHealth, mockScoreBreakdown } from '../src/data/mock'
 import { DocumentScore, DocumentIngestionRequest } from '../src/types'
 
 export default function Home() {
@@ -82,9 +81,7 @@ export default function Home() {
   const overallStats = {
     totalDocs: documents.length,
     averageScore: documents.length > 0 ? Math.round(documents.reduce((acc, doc) => acc + doc.overallScore, 0) / documents.length) : 0,
-    highRiskDocs: documents.filter(doc => doc.overallScore >= 80).length,
-    pendingRequests: mockWaitingList.length,
-    urgentItems: mockWaitingList.filter(item => item.priority === 'urgent').length
+    highRiskDocs: documents.filter(doc => doc.overallScore >= 80).length
   }
 
   return (
@@ -155,18 +152,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <Users className="h-8 w-8 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900">{overallStats.pendingRequests}</div>
-                <div className="text-sm text-gray-600">Pending Requests</div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
@@ -188,11 +173,6 @@ export default function Home() {
               priority="high"
             />
           </div>
-        </div>
-
-        {/* Queue Management Section */}
-        <div className="mb-8">
-          <QueueManagement items={mockWaitingList} />
         </div>
 
         {/* Search & Results */}
