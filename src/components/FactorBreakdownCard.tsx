@@ -1,7 +1,7 @@
 'use client'
 
 import { ScoreBreakdown } from '../types'
-import { cn, getScoreColor } from '../lib/utils'
+import { cn } from '../lib/utils'
 
 interface FactorBreakdownCardProps {
   breakdown: ScoreBreakdown
@@ -10,74 +10,51 @@ interface FactorBreakdownCardProps {
 
 export function FactorBreakdownCard({ breakdown, className }: FactorBreakdownCardProps) {
   const factors = [
-    {
-      name: 'Stability Score',
-      score: breakdown.stability.score,
-      weight: breakdown.stability.weight,
-      description: breakdown.stability.description,
-      factors: breakdown.stability.factors
-    },
-    {
-      name: 'Code Alignment',
-      score: breakdown.codeAlignment.score,
-      weight: breakdown.codeAlignment.weight,
-      description: breakdown.codeAlignment.description,
-      factors: breakdown.codeAlignment.factors
-    },
-    {
-      name: 'Info Demand',
-      score: breakdown.infoDemand.score,
-      weight: breakdown.infoDemand.weight,
-      description: breakdown.infoDemand.description,
-      factors: breakdown.infoDemand.factors
-    },
-    {
-      name: 'Ownership',
-      score: breakdown.ownership.score,
-      weight: breakdown.ownership.weight,
-      description: breakdown.ownership.description,
-      factors: breakdown.ownership.factors
-    }
+    { name: 'Stability', score: breakdown.stability.score, weight: breakdown.stability.weight, description: breakdown.stability.description },
+    { name: 'Code Alignment', score: breakdown.codeAlignment.score, weight: breakdown.codeAlignment.weight, description: breakdown.codeAlignment.description },
+    { name: 'Info Demand', score: breakdown.infoDemand.score, weight: breakdown.infoDemand.weight, description: breakdown.infoDemand.description },
+    { name: 'Ownership', score: breakdown.ownership.score, weight: breakdown.ownership.weight, description: breakdown.ownership.description }
   ]
 
+  const getBarColor = (score: number) => {
+    if (score >= 80) return 'bg-red-500'
+    if (score >= 60) return 'bg-amber-500'
+    if (score >= 40) return 'bg-blue-500'
+    return 'bg-emerald-500'
+  }
+
+  const getScoreStyle = (score: number) => {
+    if (score >= 80) return 'text-red-600'
+    if (score >= 60) return 'text-amber-600'
+    if (score >= 40) return 'text-blue-600'
+    return 'text-emerald-600'
+  }
+
   return (
-    <div className={cn('bg-white rounded-lg border border-gray-200 p-6', className)}>
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        Score Breakdown
-      </h3>
+    <div className={cn('bg-white border border-zinc-200 rounded-lg', className)}>
+      <div className="p-5 border-b border-zinc-100">
+        <h3 className="text-sm font-medium text-zinc-900">Score Breakdown</h3>
+      </div>
       
-      <div className="space-y-6">
+      <div className="p-5 space-y-5">
         {factors.map((factor) => (
-          <div key={factor.name} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
+          <div key={factor.name}>
             <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-2">
-                <h4 className="font-medium text-gray-900">{factor.name}</h4>
-                <span className="text-sm text-gray-500">
-                  (Weight: {Math.round(factor.weight * 100)}%)
-                </span>
+              <div>
+                <span className="text-sm font-medium text-zinc-900">{factor.name}</span>
+                <span className="text-xs text-zinc-400 ml-2">{Math.round(factor.weight * 100)}%</span>
               </div>
-              <div className={cn('text-lg font-bold', getScoreColor(factor.score))}>
+              <span className={cn('text-sm font-semibold', getScoreStyle(factor.score))}>
                 {Math.round(factor.score)}
-              </div>
+              </span>
             </div>
-            
-            <p className="text-sm text-gray-600 mb-3">
-              {factor.description}
-            </p>
-            
-            <div className="bg-gray-50 rounded-md p-3">
-              <div className="text-xs font-medium text-gray-700 mb-2">
-                Contributing Factors:
-              </div>
-              <ul className="space-y-1">
-                {factor.factors.map((item, index) => (
-                  <li key={index} className="text-xs text-gray-600 flex items-start">
-                    <span className="w-1 h-1 bg-gray-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+            <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden mb-1.5">
+              <div 
+                className={cn('h-full rounded-full transition-all', getBarColor(factor.score))}
+                style={{ width: `${factor.score}%` }}
+              />
             </div>
+            <p className="text-xs text-zinc-500">{factor.description}</p>
           </div>
         ))}
       </div>

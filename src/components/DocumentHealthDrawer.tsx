@@ -1,12 +1,12 @@
 'use client'
 
 import * as Dialog from '@radix-ui/react-dialog'
-import { X } from 'lucide-react'
+import { X, MessageSquare, GitCommit, Clock, User, Folder } from 'lucide-react'
 import { DocumentScore, ScoreBreakdown } from '../types'
 import { StalenessGauge } from './StalenessGauge'
 import { FactorBreakdownCard } from './FactorBreakdownCard'
 import { RecommendedActionsCard } from './RecommendedActionsCard'
-import { cn, getScoreRiskLevel } from '../lib/utils'
+import { getScoreRiskLevel } from '../lib/utils'
 
 interface DocumentHealthDrawerProps {
   document: DocumentScore | null
@@ -29,102 +29,82 @@ export function DocumentHealthDrawer({
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
-        <Dialog.Content className="fixed right-0 top-0 h-full w-full max-w-2xl bg-white shadow-xl z-50 overflow-y-auto">
-          <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+        <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40" />
+        <Dialog.Content className="fixed right-0 top-0 h-full w-full max-w-xl bg-white z-50 overflow-y-auto">
+          {/* Header */}
+          <div className="sticky top-0 z-10 bg-white border-b border-zinc-200 px-6 py-4">
             <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <Dialog.Title className="text-xl font-semibold text-gray-900 mb-1">
+              <div className="flex-1 pr-4">
+                <Dialog.Title className="text-base font-semibold text-zinc-900">
                   {document.title}
                 </Dialog.Title>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs text-zinc-500 font-mono mt-0.5">
                   {document.path}
                 </p>
-                <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
-                  <span>Owner: {document.owner}</span>
-                  <span>Category: {document.category}</span>
-                  <span>Updated: {document.lastUpdated}</span>
-                </div>
               </div>
-              <Dialog.Close className="ml-4 text-gray-400 hover:text-gray-600">
-                <X className="h-6 w-6" />
+              <Dialog.Close className="p-1.5 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 rounded-md transition-colors">
+                <X className="h-4 w-4" />
               </Dialog.Close>
+            </div>
+            <div className="flex items-center gap-4 mt-3 text-xs text-zinc-500">
+              <span className="flex items-center gap-1"><User className="h-3 w-3" />{document.owner}</span>
+              <span className="flex items-center gap-1"><Folder className="h-3 w-3" />{document.category}</span>
+              <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{document.lastUpdated}</span>
             </div>
           </div>
 
           <div className="p-6 space-y-6">
-            {/* Score Overview */}
-            <div className="text-center">
+            {/* Score */}
+            <div className="flex justify-center py-4">
               <StalenessGauge score={document.overallScore} size="lg" />
-              <div className="mt-4">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Documentation Risk Assessment
-                </h2>
-                <p className="text-gray-600 mt-1">
-                  This document has a <span className="font-semibold">
-                    {getScoreRiskLevel(document.overallScore).toLowerCase()}
-                  </span> staleness score of {Math.round(document.overallScore)}
-                </p>
-              </div>
             </div>
 
-            {/* Main Reasons */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="font-semibold text-gray-900 mb-3">
-                Why this score?
-              </h3>
+            {/* Reasons */}
+            <div className="bg-zinc-50 rounded-lg p-4">
+              <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-3">Why this score</h3>
               <ul className="space-y-2">
                 {document.reasons.map((reason, index) => (
-                  <li key={index} className="text-sm text-gray-700 flex items-start">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>{reason}</span>
+                  <li key={index} className="text-sm text-zinc-700 flex items-start gap-2">
+                    <span className="w-5 h-5 rounded bg-zinc-200 text-zinc-600 text-xs flex items-center justify-center shrink-0 font-medium">
+                      {index + 1}
+                    </span>
+                    {reason}
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Actions */}
-            <RecommendedActionsCard 
-              recommendations={document.recommendations}
-              priority={priority}
-            />
-
-            {/* Score Breakdown */}
+            <RecommendedActionsCard recommendations={document.recommendations} priority={priority} />
             <FactorBreakdownCard breakdown={breakdown} />
 
-            {/* Additional Context */}
+            {/* Stats */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-blue-50 rounded-lg p-4">
-                <div className="text-2xl font-bold text-blue-600">
-                  {document.slackQuestions}
+              <div className="bg-zinc-50 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <MessageSquare className="h-4 w-4 text-zinc-400" />
+                  <span className="text-xs text-zinc-500">Slack Questions</span>
                 </div>
-                <div className="text-sm text-blue-800">
-                  Slack questions (30 days)
-                </div>
+                <div className="text-xl font-semibold text-zinc-900">{document.slackQuestions}</div>
+                <div className="text-[10px] text-zinc-400">Last 30 days</div>
               </div>
-              <div className="bg-purple-50 rounded-lg p-4">
-                <div className="text-2xl font-bold text-purple-600">
-                  {document.codeChanges}
+              <div className="bg-zinc-50 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <GitCommit className="h-4 w-4 text-zinc-400" />
+                  <span className="text-xs text-zinc-500">Code Changes</span>
                 </div>
-                <div className="text-sm text-purple-800">
-                  Related code changes
-                </div>
+                <div className="text-xl font-semibold text-zinc-900">{document.codeChanges}</div>
+                <div className="text-[10px] text-zinc-400">Related commits</div>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="border-t border-gray-200 pt-6">
-              <div className="flex space-x-3">
-                <button className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-                  Edit Document
-                </button>
-                <button className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors">
-                  View History
-                </button>
-                <button className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors">
-                  Assign Owner
-                </button>
-              </div>
+            {/* Actions */}
+            <div className="flex gap-3 pt-4 border-t border-zinc-200">
+              <button className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-zinc-900 rounded-md hover:bg-zinc-800 transition-colors">
+                Edit Document
+              </button>
+              <button className="flex-1 px-4 py-2.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors">
+                View History
+              </button>
             </div>
           </div>
         </Dialog.Content>

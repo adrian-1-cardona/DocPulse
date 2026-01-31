@@ -1,6 +1,6 @@
 'use client'
 
-import { Upload, FileText } from 'lucide-react'
+import { Upload, Download } from 'lucide-react'
 import { useState } from 'react'
 import { DocumentScore } from '../types'
 import { importWorkspace, exportWorkspaceToPDF } from '../lib/ingestion'
@@ -18,7 +18,7 @@ export function ExportImportControls({ documents, onImport }: ExportImportContro
       setIsExportingPDF(true)
       await exportWorkspaceToPDF(documents)
     } catch (error) {
-      alert(`✗ PDF export failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      alert(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsExportingPDF(false)
     }
@@ -37,9 +37,8 @@ export function ExportImportControls({ documents, onImport }: ExportImportContro
             const jsonString = event.target?.result as string
             const imported = importWorkspace(jsonString)
             onImport(imported)
-            alert(`✓ Imported ${imported.length} documents`)
           } catch (error) {
-            alert(`✗ Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+            alert(`Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
           }
         }
         reader.readAsText(file)
@@ -49,23 +48,21 @@ export function ExportImportControls({ documents, onImport }: ExportImportContro
   }
 
   return (
-    <div className="flex space-x-2">
+    <div className="flex items-center gap-2">
       <button
         onClick={handleExportPDF}
         disabled={isExportingPDF}
-        className="inline-flex items-center space-x-1 px-3 py-2 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        title="Export workspace as PDF with detailed analysis"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-zinc-900 rounded-md hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        <FileText className="h-3.5 w-3.5" />
-        <span>{isExportingPDF ? 'Generating...' : 'Export PDF'}</span>
+        <Download className="h-3.5 w-3.5" />
+        {isExportingPDF ? 'Exporting...' : 'Export'}
       </button>
       <button
         onClick={handleImportClick}
-        className="inline-flex items-center space-x-1 px-3 py-2 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-        title="Import workspace from JSON"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-700 bg-white border border-zinc-200 rounded-md hover:bg-zinc-50 transition-colors"
       >
         <Upload className="h-3.5 w-3.5" />
-        <span>Import</span>
+        Import
       </button>
     </div>
   )

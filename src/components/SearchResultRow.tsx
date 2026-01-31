@@ -1,8 +1,8 @@
 'use client'
 
-import { Clock, MessageSquare, GitCommit, User } from 'lucide-react'
+import { Clock, MessageSquare, GitCommit, ChevronRight } from 'lucide-react'
 import { DocumentScore } from '../types'
-import { cn, getScoreBadgeColor, getScoreRiskLevel, formatScore } from '../lib/utils'
+import { cn, getScoreRiskLevel, formatScore } from '../lib/utils'
 
 interface SearchResultRowProps {
   document: DocumentScore
@@ -11,88 +11,64 @@ interface SearchResultRowProps {
 }
 
 export function SearchResultRow({ document, onClick, className }: SearchResultRowProps) {
-  const handleClick = () => {
-    if (onClick) {
-      onClick(document)
-    }
+  const getStatusColor = (score: number) => {
+    if (score >= 80) return 'bg-red-500'
+    if (score >= 60) return 'bg-amber-500'
+    if (score >= 40) return 'bg-blue-500'
+    return 'bg-emerald-500'
+  }
+
+  const getScoreStyle = (score: number) => {
+    if (score >= 80) return 'text-red-600 bg-red-50'
+    if (score >= 60) return 'text-amber-600 bg-amber-50'
+    if (score >= 40) return 'text-blue-600 bg-blue-50'
+    return 'text-emerald-600 bg-emerald-50'
   }
 
   return (
     <div 
       className={cn(
-        'bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer',
+        'group flex items-center gap-4 p-3 -mx-2 rounded-lg hover:bg-zinc-50 cursor-pointer transition-colors',
         className
       )}
-      onClick={handleClick}
+      onClick={() => onClick?.(document)}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-3 mb-2">
-            <h3 className="text-lg font-medium text-gray-900 truncate">
-              {document.title}
-            </h3>
-            <div className={cn(
-              'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border',
-              getScoreBadgeColor(document.overallScore)
-            )}>
-              {formatScore(document.overallScore)} - {getScoreRiskLevel(document.overallScore)}
-            </div>
-          </div>
-
-          <p className="text-sm text-gray-600 mb-3">
-            {document.path}
-          </p>
-
-          <div className="flex items-center space-x-4 text-sm text-gray-500">
-            <div className="flex items-center space-x-1">
-              <User className="h-4 w-4" />
-              <span>{document.owner}</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Clock className="h-4 w-4" />
-              <span>Updated {document.lastUpdated}</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <MessageSquare className="h-4 w-4" />
-              <span>{document.slackQuestions} questions</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <GitCommit className="h-4 w-4" />
-              <span>{document.codeChanges} changes</span>
-            </div>
-          </div>
-
-          {document.reasons.length > 0 && (
-            <div className="mt-3 p-3 bg-gray-50 rounded-md">
-              <div className="text-xs font-medium text-gray-700 mb-1">
-                Why this score?
-              </div>
-              <ul className="space-y-1">
-                {document.reasons.slice(0, 2).map((reason, index) => (
-                  <li key={index} className="text-xs text-gray-600 flex items-start">
-                    <span className="w-1 h-1 bg-gray-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                    <span>{reason}</span>
-                  </li>
-                ))}
-                {document.reasons.length > 2 && (
-                  <li className="text-xs text-gray-500 italic">
-                    +{document.reasons.length - 2} more reason{document.reasons.length - 2 > 1 ? 's' : ''}
-                  </li>
-                )}
-              </ul>
-            </div>
-          )}
+      <div className={cn('w-1.5 h-10 rounded-full shrink-0', getStatusColor(document.overallScore))} />
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="text-sm font-medium text-zinc-900 truncate">
+            {document.title}
+          </h3>
+          <span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', getScoreStyle(document.overallScore))}>
+            {getScoreRiskLevel(document.overallScore)}
+          </span>
         </div>
-
-        <div className="ml-4 text-right">
-          <div className="text-2xl font-bold text-gray-900">
-            {formatScore(document.overallScore)}
-          </div>
-          <div className="text-xs text-gray-500 uppercase tracking-wide">
-            Staleness Score
-          </div>
+        <p className="text-xs text-zinc-500 truncate mb-1.5 font-mono">
+          {document.path}
+        </p>
+        <div className="flex items-center gap-3 text-xs text-zinc-400">
+          <span className="flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            {document.lastUpdated}
+          </span>
+          <span className="flex items-center gap-1">
+            <MessageSquare className="h-3 w-3" />
+            {document.slackQuestions}
+          </span>
+          <span className="flex items-center gap-1">
+            <GitCommit className="h-3 w-3" />
+            {document.codeChanges}
+          </span>
         </div>
       </div>
+
+      <div className="text-right shrink-0">
+        <div className="text-lg font-semibold text-zinc-900">{formatScore(document.overallScore)}</div>
+        <div className="text-[10px] text-zinc-400 uppercase tracking-wide">Score</div>
+      </div>
+
+      <ChevronRight className="h-4 w-4 text-zinc-300 group-hover:text-zinc-500 transition-colors shrink-0" />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, FileText, TrendingUp, Clock } from 'lucide-react'
+import { Search, FileText, ArrowUpRight, AlertCircle } from 'lucide-react'
 import { StalenessGauge } from '../src/components/StalenessGauge'
 import { FactorBreakdownCard } from '../src/components/FactorBreakdownCard'
 import { RecommendedActionsCard } from '../src/components/RecommendedActionsCard'
@@ -27,97 +27,89 @@ export default function Home() {
     try {
       setDocuments(imported)
       setToast({
-        message: `✓ Imported ${imported.length} documents from workspace`,
+        message: `Imported ${imported.length} documents`,
         type: 'success'
       })
-      setTimeout(() => setToast(null), 4000)
+      setTimeout(() => setToast(null), 3000)
     } catch (error) {
       setToast({
-        message: `✗ Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        message: `Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
         type: 'error'
       })
-      setTimeout(() => setToast(null), 4000)
+      setTimeout(() => setToast(null), 3000)
     }
   }
 
   const overallStats = {
     totalDocs: documents.length,
     averageScore: documents.length > 0 ? Math.round(documents.reduce((acc, doc) => acc + doc.overallScore, 0) / documents.length) : 0,
-    highRiskDocs: documents.filter(doc => doc.overallScore >= 80).length
+    highRiskDocs: documents.filter(doc => doc.overallScore >= 80).length,
+    healthyDocs: documents.filter(doc => doc.overallScore < 40).length
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <FileText className="h-8 w-8 text-blue-600" />
-              <h1 className="text-xl font-semibold text-gray-900">
-                DocPulse Dashboard
-              </h1>
+      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-zinc-200">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex items-center justify-between h-14">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 bg-zinc-900 rounded-md flex items-center justify-center">
+                <FileText className="h-4 w-4 text-white" />
+              </div>
+              <span className="text-sm font-semibold text-zinc-900">DocPulse</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <ExportImportControls documents={documents} onImport={handleImportWorkspace} />
-            </div>
+            <ExportImportControls documents={documents} onImport={handleImportWorkspace} />
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <FileText className="h-8 w-8 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900">{overallStats.totalDocs}</div>
-                <div className="text-sm text-gray-600">Total Documents</div>
-              </div>
-            </div>
+      {/* Main */}
+      <main className="max-w-6xl mx-auto px-6 py-8">
+        {/* Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          <div className="bg-white border border-zinc-200 rounded-lg p-5">
+            <div className="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-1">Documents</div>
+            <div className="text-2xl font-semibold text-zinc-900">{overallStats.totalDocs}</div>
           </div>
-          
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <TrendingUp className="h-8 w-8 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900">{overallStats.averageScore}</div>
-                <div className="text-sm text-gray-600">Average Health Score</div>
-              </div>
-            </div>
+          <div className="bg-white border border-zinc-200 rounded-lg p-5">
+            <div className="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-1">Healthy</div>
+            <div className="text-2xl font-semibold text-emerald-600">{overallStats.healthyDocs}</div>
           </div>
-
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <Clock className="h-8 w-8 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900">{overallStats.highRiskDocs}</div>
-                <div className="text-sm text-gray-600">High Risk Docs</div>
-              </div>
+          <div className="bg-white border border-zinc-200 rounded-lg p-5">
+            <div className="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-1">Avg Score</div>
+            <div className="text-2xl font-semibold text-zinc-900">{overallStats.averageScore}</div>
+          </div>
+          <div className="bg-white border border-zinc-200 rounded-lg p-5">
+            <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 uppercase tracking-wide mb-1">
+              <span>High Risk</span>
+              {overallStats.highRiskDocs > 0 && <AlertCircle className="h-3 w-3 text-red-500" />}
             </div>
+            <div className="text-2xl font-semibold text-red-600">{overallStats.highRiskDocs}</div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
           <div className="lg:col-span-2">
             <TeamHealthDashboard teams={mockTeamHealth} />
           </div>
           <div className="space-y-6">
             {documents.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
-                <StalenessGauge score={documents[0].overallScore} size="lg" />
-                <div className="mt-4">
-                  <h3 className="font-semibold text-gray-900">Featured Document</h3>
-                  <p className="text-sm text-gray-600 mt-1">{documents[0].title}</p>
+              <div className="bg-white border border-zinc-200 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-medium text-zinc-900">Top Priority</h3>
+                  <button 
+                    onClick={() => setSelectedDocument(documents[0])}
+                    className="text-xs text-zinc-500 hover:text-zinc-900 flex items-center gap-1 transition-colors"
+                  >
+                    View <ArrowUpRight className="h-3 w-3" />
+                  </button>
                 </div>
+                <div className="flex justify-center mb-4">
+                  <StalenessGauge score={documents[0].overallScore} size="lg" />
+                </div>
+                <p className="text-sm text-zinc-600 text-center">{documents[0].title}</p>
               </div>
             )}
             <RecommendedActionsCard 
@@ -127,71 +119,90 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Search & Results */}
-        <div className="mb-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        {/* Search */}
+        <div className="mb-10">
+          <div className="bg-white border border-zinc-200 rounded-lg">
+            <div className="p-4 border-b border-zinc-100">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
                 <input
                   type="text"
-                  placeholder="Search documentation..."
+                  placeholder="Search documents..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm bg-zinc-50 border border-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent placeholder:text-zinc-400"
                 />
               </div>
             </div>
-
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Documentation Health Results ({filteredDocuments.length})
-              </h3>
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-medium text-zinc-900">All Documents</h2>
+                <span className="text-xs text-zinc-500">{filteredDocuments.length} results</span>
+              </div>
               {filteredDocuments.length > 0 ? (
-                filteredDocuments.map((doc) => (
-                  <SearchResultRow
-                    key={doc.id}
-                    document={doc}
-                    onClick={setSelectedDocument}
-                  />
-                ))
+                <div className="space-y-2">
+                  {filteredDocuments.map((doc) => (
+                    <SearchResultRow
+                      key={doc.id}
+                      document={doc}
+                      onClick={setSelectedDocument}
+                    />
+                  ))}
+                </div>
               ) : (
-                <p className="text-gray-500 text-sm">No documents found.</p>
+                <div className="text-center py-12">
+                  <p className="text-sm text-zinc-500">No documents found</p>
+                </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Breakdown for featured document */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Bottom Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <FactorBreakdownCard breakdown={mockScoreBreakdown} />
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Documentation Tips
-            </h3>
+          <div className="bg-white border border-zinc-200 rounded-lg p-6">
+            <h3 className="text-sm font-medium text-zinc-900 mb-5">Quick Tips</h3>
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium text-gray-800 mb-2">Best Practices</h4>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>✓ Keep documentation synchronized with code</li>
-                  <li>✓ Assign clear ownership and maintenance windows</li>
-                  <li>✓ Include working examples and use cases</li>
+                <h4 className="text-xs font-medium text-zinc-700 uppercase tracking-wide mb-2">Best Practices</h4>
+                <ul className="space-y-1.5">
+                  <li className="text-sm text-zinc-600 flex items-start gap-2">
+                    <span className="w-1 h-1 bg-zinc-400 rounded-full mt-2 shrink-0"></span>
+                    Keep documentation synchronized with code
+                  </li>
+                  <li className="text-sm text-zinc-600 flex items-start gap-2">
+                    <span className="w-1 h-1 bg-zinc-400 rounded-full mt-2 shrink-0"></span>
+                    Assign clear ownership
+                  </li>
+                  <li className="text-sm text-zinc-600 flex items-start gap-2">
+                    <span className="w-1 h-1 bg-zinc-400 rounded-full mt-2 shrink-0"></span>
+                    Include working examples
+                  </li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium text-gray-800 mb-2">Maintenance Tips</h4>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>✓ Schedule regular review cycles</li>
-                  <li>✓ Update when code changes occur</li>
-                  <li>✓ Respond to team questions promptly</li>
+                <h4 className="text-xs font-medium text-zinc-700 uppercase tracking-wide mb-2">Maintenance</h4>
+                <ul className="space-y-1.5">
+                  <li className="text-sm text-zinc-600 flex items-start gap-2">
+                    <span className="w-1 h-1 bg-zinc-400 rounded-full mt-2 shrink-0"></span>
+                    Schedule regular review cycles
+                  </li>
+                  <li className="text-sm text-zinc-600 flex items-start gap-2">
+                    <span className="w-1 h-1 bg-zinc-400 rounded-full mt-2 shrink-0"></span>
+                    Update when code changes
+                  </li>
+                  <li className="text-sm text-zinc-600 flex items-start gap-2">
+                    <span className="w-1 h-1 bg-zinc-400 rounded-full mt-2 shrink-0"></span>
+                    Respond to questions promptly
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
-      {/* Document Health Drawer */}
       <DocumentHealthDrawer
         document={selectedDocument}
         breakdown={mockScoreBreakdown}
@@ -199,16 +210,12 @@ export default function Home() {
         onClose={() => setSelectedDocument(null)}
       />
 
-      {/* Toast Notification */}
+      {/* Toast */}
       {toast && (
-        <div className="fixed bottom-4 right-4 z-40">
-          <div
-            className={`px-4 py-3 rounded-lg shadow-lg text-sm font-medium ${
-              toast.type === 'success'
-                ? 'bg-green-500 text-white'
-                : 'bg-red-500 text-white'
-            }`}
-          >
+        <div className="fixed bottom-6 right-6 z-50">
+          <div className={`px-4 py-3 rounded-lg text-sm font-medium shadow-lg ${
+            toast.type === 'success' ? 'bg-zinc-900 text-white' : 'bg-red-600 text-white'
+          }`}>
             {toast.message}
           </div>
         </div>
